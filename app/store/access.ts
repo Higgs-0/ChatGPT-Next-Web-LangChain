@@ -12,7 +12,9 @@ import { ensure } from "../utils/clone";
 let fetchState = 0; // 0 not fetch, 1 fetching, 2 done
 
 const DEFAULT_OPENAI_URL =
-  getClientConfig()?.buildMode === "export" ? DEFAULT_API_HOST : ApiPath.OpenAI;
+  getClientConfig()?.buildMode === "export"
+    ? DEFAULT_API_HOST + "/api/proxy/openai"
+    : ApiPath.OpenAI;
 
 const DEFAULT_ACCESS_STATE = {
   accessCode: "",
@@ -27,10 +29,10 @@ const DEFAULT_ACCESS_STATE = {
   // azure
   azureUrl: "",
   azureApiKey: "",
-  azureApiVersion: "2023-08-01-preview",
+  azureApiVersion: "2024-02-15-preview",
 
   // google ai studio
-  googleBaseUrl: "",
+  googleUrl: "",
   googleApiKey: "",
   googleApiVersion: "v1",
 
@@ -41,6 +43,7 @@ const DEFAULT_ACCESS_STATE = {
   disableGPT4: false,
   disableFastLink: false,
   customModels: "",
+  isEnableRAG: false,
 };
 
 export const useAccessStore = createPersistStore(
@@ -51,6 +54,12 @@ export const useAccessStore = createPersistStore(
       this.fetch();
 
       return get().needCode;
+    },
+
+    enableRAG() {
+      this.fetch();
+
+      return get().isEnableRAG;
     },
 
     isValidOpenAI() {
@@ -112,7 +121,7 @@ export const useAccessStore = createPersistStore(
           googleApiKey: string;
         };
         state.openaiApiKey = state.token;
-        state.azureApiVersion = "2023-08-01-preview";
+        state.azureApiVersion = "2024-02-15-preview";
         state.googleApiKey = state.token;
       }
 
